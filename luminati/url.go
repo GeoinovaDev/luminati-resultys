@@ -22,7 +22,7 @@ func CreateURL(user string, pass string) *URL {
 
 // ToString ...
 func (u *URL) ToString() string {
-	return "http://" + u.user + "-session-" + u.Session.Get() + ":" + u.pass + "@" + u.ip + ":22225"
+	return u.user + "-session-" + u.Session.Get() + ":" + u.pass + "@" + u.ip + ":22225"
 }
 
 func getHostByName(name string) string {
