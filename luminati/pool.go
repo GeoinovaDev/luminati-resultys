@@ -30,3 +30,11 @@ func (p *Pool) Get() *URL {
 
 	return url
 }
+
+// Clear ...
+func (p *Pool) Clear() {
+	p.mx.Lock()
+	p.seek = 0
+	p.urls = []*URL{}
+	p.mx.Unlock()
+}
