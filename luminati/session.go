@@ -23,6 +23,11 @@ func CreateSession() *Session {
 	return &Session{id: uuid(), count: 0, mx: &sync.Mutex{}}
 }
 
+// Raw ...
+func (s *Session) Raw() string {
+	return strconv.Itoa(s.id)
+}
+
 // Get ...
 func (s *Session) Get() string {
 	s.mx.Lock()
@@ -32,7 +37,7 @@ func (s *Session) Get() string {
 	s.count++
 	s.mx.Unlock()
 
-	return strconv.Itoa(s.id)
+	return s.Raw()
 }
 
 // Reset ...
