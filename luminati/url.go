@@ -16,9 +16,10 @@ func CreateURL(user string, pass string, host string, port string) *URL {
 	return &URL{
 		user:    user,
 		pass:    pass,
-		ip:      getHostByName(host),
+		ip:      host,
 		port:    port,
 		Session: CreateSession(),
+		// ip:      getHostByName(host),
 	}
 }
 
