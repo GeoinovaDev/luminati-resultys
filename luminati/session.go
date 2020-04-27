@@ -1,7 +1,9 @@
 package luminati
 
 import (
-	"strconv"
+	"crypto/rand"
+	"fmt"
+	"log"
 	"sync"
 )
 
@@ -13,19 +15,14 @@ var MaxRequestBySession = 10
 
 // Session ...
 type Session struct {
-	id    int
+	ID    string
 	count int
 	mx    *sync.Mutex
 }
 
 // CreateSession ...
 func CreateSession() *Session {
-	return &Session{id: uuid(), count: 0, mx: &sync.Mutex{}}
-}
-
-// Raw ...
-func (s *Session) Raw() string {
-	return strconv.Itoa(s.id)
+	return &Session{ID: uuid(), count: 0, mx: &sync.Mutex{}}
 }
 
 // Get ...
@@ -37,7 +34,7 @@ func (s *Session) Get() string {
 	s.count++
 	s.mx.Unlock()
 
-	return s.Raw()
+	return s.ID
 }
 
 // Reset ...
@@ -48,18 +45,31 @@ func (s *Session) Reset() {
 }
 
 func (s *Session) _reset() {
-	s.id = uuid()
+	s.ID = uuid()
 	s.count = 0
 }
 
-func uuid() int {
+func uuid() string {
 	if globalMx == nil {
 		globalMx = &sync.Mutex{}
 	}
 
 	globalMx.Lock()
 	countID++
+	uuid := generation(countID)
 	globalMx.Unlock()
 
-	return countID
+	return uuid
+}
+
+func generation(seed int) string {
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	uuid := fmt.Sprintf("%x%x%x%x%x%d", b[0:4], b[4:6], b[6:8], b[8:10], b[10:], seed)
+
+	return uuid
 }

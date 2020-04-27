@@ -30,7 +30,7 @@ func (u *URL) ToString() string {
 
 // Raw ...
 func (u *URL) Raw() string {
-	return u.user + "-session-" + u.Session.Raw() + ":" + u.pass + "@" + u.ip + ":" + u.port
+	return u.user + "-session-" + u.Session.ID + ":" + u.pass + "@" + u.ip + ":" + u.port
 }
 
 func getHostByName(name string) string {
