@@ -1,6 +1,9 @@
 package luminati
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 // Pool ...
 type Pool struct {
@@ -17,6 +20,46 @@ func CreatePool() *Pool {
 // Add ...
 func (p *Pool) Add(url *URL) *Pool {
 	p.urls = append(p.urls, url)
+
+	return p
+}
+
+// PopAndPush ...
+func (p *Pool) PopAndPush(url *URL) *Pool {
+	p.mx.Lock()
+	for i, _url := range p.urls {
+		if url.Equal(_url) {
+			p.urls = append(p.urls[:i], p.urls[i+1:]...)
+			p.urls = append(p.urls, _url)
+			break
+		}
+	}
+	p.mx.Unlock()
+	return p
+}
+
+// RemoveTemporary
+func (p *Pool) RemoveTemporary(url *URL, sec int) *Pool {
+	var urlRemoved *URL = nil
+
+	p.mx.Lock()
+	for i, _url := range p.urls {
+		if url.Equal(_url) {
+			urlRemoved = _url
+			p.urls = append(p.urls[:i], p.urls[i+1:]...)
+			break
+		}
+	}
+	p.mx.Unlock()
+
+	go func() {
+		time.Sleep(time.Duration(sec) * time.Second)
+		if urlRemoved != nil {
+			p.mx.Lock()
+			p.urls = append(p.urls, urlRemoved)
+			p.mx.Unlock()
+		}
+	}()
 
 	return p
 }

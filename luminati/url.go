@@ -28,6 +28,11 @@ func (u *URL) ToString() string {
 	return u.user + "-session-" + u.Session.Get() + ":" + u.pass + "@" + u.ip + ":" + u.port
 }
 
+// Equal ...
+func (u *URL) Equal(url *URL) bool {
+	return u.user == url.user && u.pass == url.pass && u.ip == url.ip && u.port == url.port
+}
+
 // Raw ...
 func (u *URL) Raw() string {
 	return u.user + "-session-" + u.Session.ID + ":" + u.pass + "@" + u.ip + ":" + u.port
